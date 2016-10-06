@@ -27,11 +27,11 @@ var GridRowContainer = React.createClass({
         return {
            "data": {
            },
-           "showChildren":false
+           "showChildren":true
         }
     },
     componentWillReceiveProps: function(){
-      this.setShowChildren(false);
+      this.setShowChildren(true);
     },
     toggleChildren: function(){
       this.setShowChildren(this.state.showChildren === false);

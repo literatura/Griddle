@@ -15,7 +15,7 @@ var GridRow = React.createClass({
     getDefaultProps: function(){
       return {
         "isChildRow": false,
-        "showChildren": false,
+        "showChildren": true,
         "data": {},
         "columnSettings": null,
         "rowSettings": null,
