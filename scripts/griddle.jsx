@@ -525,7 +525,6 @@ var Griddle = React.createClass({
             if(this.props.useExternal){
                 sortColumnType = this.getCurrentSort();
                 sortDirectionType = this.getCurrentSortAscending();
-                console.log("getDataForRender", sortColumnType, sortDirectionType);
             }
         }
 
@@ -540,21 +539,15 @@ var Griddle = React.createClass({
                     orders: []
                 };
 
-                console.log("1");
-
                 if (sortColumn.length > 0) {
-                    console.log("2");
                     customCompareFn = sortColumn[0].hasOwnProperty("customCompareFn") && sortColumn[0]["customCompareFn"];
                     if (sortColumn[0]["multiSort"]) {
-                        console.log("3");
                         multiSort = sortColumn[0]["multiSort"];
                     }
                 }
 
                 if (sortDirectionType) {
-                    console.log("4");
                     if (typeof customCompareFn === 'function') {
-                        console.log("5");
                         if (customCompareFn.length === 2) {
                             data = data.sort(function (a, b) {
                                 return customCompareFn(_get(a, column), _get(b, column));
@@ -569,7 +562,6 @@ var Griddle = React.createClass({
                             }, [this.state.sortDirection]);
                         }
                     } else {
-                        console.log("6");
                         var iteratees = [_property(column)];
                         var orders = [this.state.sortDirection];
                         multiSort.columns.forEach((col, i) => {
@@ -591,11 +583,9 @@ var Griddle = React.createClass({
 
             if (!this.props.useExternal && pageList && (this.state.resultsPerPage * (currentPage+1) <= this.state.resultsPerPage * this.state.maxPage) && (currentPage >= 0)) {
                 if (this.isInfiniteScrollEnabled()) {
-                    console.log("7");
                   // If we're doing infinite scroll, grab all results up to the current page.
                   data = first(data, (currentPage + 1) * this.state.resultsPerPage);
                 } else {
-                    console.log("8");
                   //the 'rest' is grabbing the whole array from index on and the 'initial' is getting the first n results
                   var rest = drop(data, currentPage * this.state.resultsPerPage);
                   data = (dropRight || initial)(rest, rest.length-this.state.resultsPerPage);
