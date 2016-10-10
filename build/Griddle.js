@@ -675,7 +675,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this.props.useExternal ? this.props.externalSortColumn : this.state.sortColumn;
 	    },
 	    getCurrentSortAscending: function getCurrentSortAscending() {
-	        console.log("getCurrentSortAscending", this.props.externalSortAscending, this.state.sortDirection);
 	        return this.props.useExternal ? this.props.externalSortAscending : this.state.sortDirection === 'asc';
 	    },
 	    getCurrentMaxPage: function getCurrentMaxPage() {
@@ -692,7 +691,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            changeSort: this.changeSort,
 	            sortColumn: this.getCurrentSort(),
 	            sortAscending: this.getCurrentSortAscending(),
-	            sortDirection: curSortDirection, /*this.state.sortDirection*/
+	            sortDirection: curSortDirection,
 	            sortAscendingClassName: this.props.sortAscendingClassName,
 	            sortDescendingClassName: this.props.sortDescendingClassName,
 	            sortAscendingComponent: this.props.sortAscendingComponent,
@@ -1356,15 +1355,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var that = this;
 	        var titleStyles = {};
 
-	        console.log(that.props);
-
 	        var nodes = this.props.columnSettings.getColumns().map(function (col, index) {
 	            var defaultTitleStyles = {};
 	            var columnSort = "";
 	            var columnIsSortable = that.props.columnSettings.getMetadataColumnProperty(col, "sortable", true);
 	            var sortComponent = columnIsSortable ? that.props.sortSettings.sortDefaultComponent : null;
 
-	            //console.log(that.props.sortSettings.sortColumn, col, that.props.sortSettings.sortDirection);
 	            if (that.props.sortSettings.sortColumn == col && that.props.sortSettings.sortDirection === 'asc') {
 	                columnSort = that.props.sortSettings.sortAscendingClassName;
 	                sortComponent = that.props.useGriddleIcons && that.props.sortSettings.sortAscendingComponent;

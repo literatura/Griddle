@@ -71,15 +71,12 @@ var GridTitle = React.createClass({
         var that = this;
         var titleStyles = {};
 
-        console.log(that.props);
-
         var nodes = this.props.columnSettings.getColumns().map(function (col, index) {
             var defaultTitleStyles = {};
             var columnSort = "";
             var columnIsSortable = that.props.columnSettings.getMetadataColumnProperty(col, "sortable", true);
             var sortComponent = columnIsSortable ? that.props.sortSettings.sortDefaultComponent : null;
 
-            //console.log(that.props.sortSettings.sortColumn, col, that.props.sortSettings.sortDirection);
             if (that.props.sortSettings.sortColumn == col && that.props.sortSettings.sortDirection === 'asc') {
                 columnSort = that.props.sortSettings.sortAscendingClassName;
                 sortComponent = that.props.useGriddleIcons && that.props.sortSettings.sortAscendingComponent;
