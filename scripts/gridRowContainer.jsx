@@ -49,9 +49,10 @@ var GridRowContainer = React.createClass({
     render: function(){
       this.verifyProps();
       var that = this;
-      if(typeof this.props.data === "undefined"){return (<tbody></tbody>);}
+      if(typeof this.props.data === "undefined"){return (<tbody key={that.props.uniqueId + '_undefined_row'}></tbody>);}
       var arr = [];
 
+      var zzkey = that.props.uniqueId + 'zz';
       var columns = this.props.columnSettings.getColumns();
 
       arr.push(
@@ -86,8 +87,8 @@ var GridRowContainer = React.createClass({
               if(typeof row["children"] !== "undefined"){
                 var Griddle = that.constructor.Griddle;
                 return (
-                  <tr key={key} style={{paddingLeft: 5}}>
-                    <td colSpan={that.props.columnSettings.getVisibleColumnCount()} className="griddle-parent" style={that.props.useGriddleStyles ? {border: "none", "padding": "0 0 0 5px"} : null}>
+                  <tr key={key+"_"} style={{paddingLeft: 5}}>
+                    <td colSpan={that.props.columnSettings.getVisibleColumnCount()} className="griddle-parent" style={that.props.useGriddleStyles ? {border: "none", "padding": "0 0 0 5px"} : null} key={key+"_td_"+index}>
                       <Griddle
                           rowMetadata={{key: 'id'}}
                           isSubGriddle={true}
@@ -102,8 +103,7 @@ var GridRowContainer = React.createClass({
                           parentRowExpandedComponent={that.props.parentRowExpandedComponent}
                           parentRowCollapsedComponent={that.props.parentRowCollapsedComponent}
                           paddingHeight={that.props.paddingHeight}
-                          rowHeight={that.props.rowHeight}
-                      />
+                          rowHeight={that.props.rowHeight} />
                     </td>
                   </tr>
                 );
@@ -117,13 +117,12 @@ var GridRowContainer = React.createClass({
                     columnSettings={that.props.columnSettings}
                     isChildRow={true}
                     columnMetadata={that.props.columnSettings.columnMetadata}
-                    key={key}
-                />
+                    key={key} />
               );
           });
       }
 
-      return that.props.hasChildren === false ? arr[0] : <tbody>{that.state.showChildren ? arr.concat(children) : arr}</tbody>
+      return that.props.hasChildren === false ? arr[0] : <tbody key={zzkey}>{that.state.showChildren ? arr.concat(children) : arr}</tbody>
     }
 });
 

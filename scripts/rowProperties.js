@@ -11,12 +11,12 @@ class RowProperties{
   getRowKey(row, key) {
     var uniqueId;
 
-    if(this.hasRowMetadataKey()){
+    /*if(this.hasRowMetadataKey()){
       uniqueId = row[this.rowMetadata.key];
     }
-    else{
+    else{*/
       uniqueId = _uniqueId("grid_row");
-    }
+    //}
 
     //todo: add error handling
 

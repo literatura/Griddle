@@ -675,6 +675,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this.props.useExternal ? this.props.externalSortColumn : this.state.sortColumn;
 	    },
 	    getCurrentSortAscending: function getCurrentSortAscending() {
+	        console.log("getCurrentSortAscending", this.props.externalSortAscending, this.state.sortDirection);
 	        return this.props.useExternal ? this.props.externalSortAscending : this.state.sortDirection === 'asc';
 	    },
 	    getCurrentMaxPage: function getCurrentMaxPage() {
@@ -682,12 +683,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 	    //This takes the props relating to sort and puts them in one object
 	    getSortObject: function getSortObject() {
+	        var curSortDirection = this.state.sortDirection;
+	        if (this.props.useExternal) {
+	            curSortDirection = this.getCurrentSortAscending() ? 'asc' : 'desc';
+	        }
 	        return {
 	            enableSort: this.props.enableSort,
 	            changeSort: this.changeSort,
 	            sortColumn: this.getCurrentSort(),
 	            sortAscending: this.getCurrentSortAscending(),
-	            sortDirection: this.state.sortDirection,
+	            sortDirection: curSortDirection, /*this.state.sortDirection*/
 	            sortAscendingClassName: this.props.sortAscendingClassName,
 	            sortDescendingClassName: this.props.sortDescendingClassName,
 	            sortAscendingComponent: this.props.sortAscendingComponent,
@@ -1351,12 +1356,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var that = this;
 	        var titleStyles = {};
 
+	        console.log(that.props);
+
 	        var nodes = this.props.columnSettings.getColumns().map(function (col, index) {
 	            var defaultTitleStyles = {};
 	            var columnSort = "";
 	            var columnIsSortable = that.props.columnSettings.getMetadataColumnProperty(col, "sortable", true);
 	            var sortComponent = columnIsSortable ? that.props.sortSettings.sortDefaultComponent : null;
 
+	            //console.log(that.props.sortSettings.sortColumn, col, that.props.sortSettings.sortDirection);
 	            if (that.props.sortSettings.sortColumn == col && that.props.sortSettings.sortDirection === 'asc') {
 	                columnSort = that.props.sortSettings.sortAscendingClassName;
 	                sortComponent = that.props.useGriddleIcons && that.props.sortSettings.sortAscendingComponent;
@@ -6811,10 +6819,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.verifyProps();
 	    var that = this;
 	    if (typeof this.props.data === "undefined") {
-	      return React.createElement('tbody', null);
+	      return React.createElement('tbody', { key: that.props.uniqueId + '_undefined_row' });
 	    }
 	    var arr = [];
 
+	    var zzkey = that.props.uniqueId + 'zz';
 	    var columns = this.props.columnSettings.getColumns();
 
 	    arr.push(React.createElement(this.props.rowSettings.rowComponent, {
@@ -6846,7 +6855,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (typeof row["children"] !== "undefined") {
 	          var Griddle = that.constructor.Griddle;
-	          return React.createElement('tr', { key: key, style: { paddingLeft: 5 } }, React.createElement('td', { colSpan: that.props.columnSettings.getVisibleColumnCount(), className: 'griddle-parent', style: that.props.useGriddleStyles ? { border: "none", "padding": "0 0 0 5px" } : null }, React.createElement(Griddle, {
+	          return React.createElement('tr', { key: key + "_", style: { paddingLeft: 5 } }, React.createElement('td', { colSpan: that.props.columnSettings.getVisibleColumnCount(), className: 'griddle-parent', style: that.props.useGriddleStyles ? { border: "none", "padding": "0 0 0 5px" } : null, key: key + "_td_" + index }, React.createElement(Griddle, {
 	            rowMetadata: { key: 'id' },
 	            isSubGriddle: true,
 	            results: [row],
@@ -6860,8 +6869,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            parentRowExpandedComponent: that.props.parentRowExpandedComponent,
 	            parentRowCollapsedComponent: that.props.parentRowCollapsedComponent,
 	            paddingHeight: that.props.paddingHeight,
-	            rowHeight: that.props.rowHeight
-	          })));
+	            rowHeight: that.props.rowHeight })));
 	        }
 
 	        return React.createElement(that.props.rowSettings.rowComponent, {
@@ -6871,12 +6879,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	          columnSettings: that.props.columnSettings,
 	          isChildRow: true,
 	          columnMetadata: that.props.columnSettings.columnMetadata,
-	          key: key
-	        });
+	          key: key });
 	      });
 	    }
 
-	    return that.props.hasChildren === false ? arr[0] : React.createElement('tbody', null, that.state.showChildren ? arr.concat(children) : arr);
+	    return that.props.hasChildren === false ? arr[0] : React.createElement('tbody', { key: zzkey }, that.state.showChildren ? arr.concat(children) : arr);
 	  }
 	});
 
@@ -7055,11 +7062,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function getRowKey(row, key) {
 	      var uniqueId;
 
-	      if (this.hasRowMetadataKey()) {
+	      /*if(this.hasRowMetadataKey()){
 	        uniqueId = row[this.rowMetadata.key];
-	      } else {
-	        uniqueId = _uniqueId("grid_row");
 	      }
+	      else{*/
+	      uniqueId = _uniqueId("grid_row");
+	      //}
 
 	      //todo: add error handling
 

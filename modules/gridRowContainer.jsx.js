@@ -53,10 +53,11 @@ var GridRowContainer = React.createClass({
     this.verifyProps();
     var that = this;
     if (typeof this.props.data === "undefined") {
-      return React.createElement('tbody', null);
+      return React.createElement('tbody', { key: that.props.uniqueId + '_undefined_row' });
     }
     var arr = [];
 
+    var zzkey = that.props.uniqueId + 'zz';
     var columns = this.props.columnSettings.getColumns();
 
     arr.push(React.createElement(this.props.rowSettings.rowComponent, {
@@ -88,7 +89,7 @@ var GridRowContainer = React.createClass({
 
         if (typeof row["children"] !== "undefined") {
           var Griddle = that.constructor.Griddle;
-          return React.createElement('tr', { key: key, style: { paddingLeft: 5 } }, React.createElement('td', { colSpan: that.props.columnSettings.getVisibleColumnCount(), className: 'griddle-parent', style: that.props.useGriddleStyles ? { border: "none", "padding": "0 0 0 5px" } : null }, React.createElement(Griddle, {
+          return React.createElement('tr', { key: key + "_", style: { paddingLeft: 5 } }, React.createElement('td', { colSpan: that.props.columnSettings.getVisibleColumnCount(), className: 'griddle-parent', style: that.props.useGriddleStyles ? { border: "none", "padding": "0 0 0 5px" } : null, key: key + "_td_" + index }, React.createElement(Griddle, {
             rowMetadata: { key: 'id' },
             isSubGriddle: true,
             results: [row],
@@ -102,8 +103,7 @@ var GridRowContainer = React.createClass({
             parentRowExpandedComponent: that.props.parentRowExpandedComponent,
             parentRowCollapsedComponent: that.props.parentRowCollapsedComponent,
             paddingHeight: that.props.paddingHeight,
-            rowHeight: that.props.rowHeight
-          })));
+            rowHeight: that.props.rowHeight })));
         }
 
         return React.createElement(that.props.rowSettings.rowComponent, {
@@ -113,12 +113,11 @@ var GridRowContainer = React.createClass({
           columnSettings: that.props.columnSettings,
           isChildRow: true,
           columnMetadata: that.props.columnSettings.columnMetadata,
-          key: key
-        });
+          key: key });
       });
     }
 
-    return that.props.hasChildren === false ? arr[0] : React.createElement('tbody', null, that.state.showChildren ? arr.concat(children) : arr);
+    return that.props.hasChildren === false ? arr[0] : React.createElement('tbody', { key: zzkey }, that.state.showChildren ? arr.concat(children) : arr);
   }
 });
 

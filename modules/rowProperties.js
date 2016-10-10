@@ -25,11 +25,12 @@ var RowProperties = (function () {
     value: function getRowKey(row, key) {
       var uniqueId;
 
-      if (this.hasRowMetadataKey()) {
+      /*if(this.hasRowMetadataKey()){
         uniqueId = row[this.rowMetadata.key];
-      } else {
-        uniqueId = _uniqueId("grid_row");
       }
+      else{*/
+      uniqueId = _uniqueId("grid_row");
+      //}
 
       //todo: add error handling
 
