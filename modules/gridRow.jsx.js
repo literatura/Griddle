@@ -73,18 +73,6 @@ var GridRow = React.createClass({
 
         this.verifyProps();
         var that = this;
-        var columnStyles = null;
-
-        if (this.props.useGriddleStyles) {
-            columnStyles = {
-                margin: "0px",
-                padding: that.props.paddingHeight + "px 5px " + that.props.paddingHeight + "px 5px",
-                height: that.props.rowHeight ? this.props.rowHeight - that.props.paddingHeight * 2 + "px" : null,
-                backgroundColor: "#FFF",
-                borderTopColor: "#DDD",
-                color: "#222"
-            };
-        }
 
         var columns = this.props.columnSettings.getColumns();
 
@@ -104,26 +92,22 @@ var GridRow = React.createClass({
             //todo: Make this not as ridiculous looking
             var firstColAppend = index === 0 && _this.props.hasChildren && _this.props.showChildren === false && _this.props.useGriddleIcons ? React.createElement('span', { style: _this.props.useGriddleStyles ? { fontSize: "10px", marginRight: "5px" } : null }, _this.props.parentRowCollapsedComponent) : index === 0 && _this.props.hasChildren && _this.props.showChildren && _this.props.useGriddleIcons ? React.createElement('span', { style: _this.props.useGriddleStyles ? { fontSize: "10px" } : null }, _this.props.parentRowExpandedComponent) : "";
 
-            if (index === 0 && _this.props.isChildRow && _this.props.useGriddleStyles) {
-                columnStyles = assign(columnStyles, { paddingLeft: 10 });
-            }
-
             if (_this.props.columnSettings.hasColumnMetadata() && typeof meta !== 'undefined' && meta !== null) {
                 if (typeof meta.customComponent !== 'undefined' && meta.customComponent !== null) {
                     var customComponent = React.createElement(meta.customComponent, { data: col[1], rowData: dataView, metadata: meta });
-                    returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index, style: columnStyles }, customComponent);
+                    returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index }, customComponent);
                 } else {
-                    returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index, style: columnStyles }, firstColAppend, _this.formatData(col[1]));
+                    returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index }, firstColAppend, _this.formatData(col[1]));
                 }
             }
 
-            return returnValue || React.createElement('td', { onClick: _this.handleClick, key: index, style: columnStyles }, firstColAppend, col[1]);
+            return returnValue || React.createElement('td', { onClick: _this.handleClick, key: index }, firstColAppend, col[1]);
         });
 
         if (nodes && this.props.multipleSelectionSettings && this.props.multipleSelectionSettings.isMultipleSelection) {
             var selectedRowIds = this.props.multipleSelectionSettings.getSelectedRowIds();
 
-            nodes.unshift(React.createElement('td', { key: 'selection', style: columnStyles }, React.createElement('input', {
+            nodes.unshift(React.createElement('td', { key: 'selection' }, React.createElement('input', {
                 type: 'checkbox',
                 checked: this.props.multipleSelectionSettings.getIsRowChecked(dataView),
                 onChange: this.handleSelectionChange,

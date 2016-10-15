@@ -87,8 +87,8 @@ var GridRowContainer = React.createClass({
               if(typeof row["children"] !== "undefined"){
                 var Griddle = that.constructor.Griddle;
                 return (
-                  <tr key={key+"_"} style={{paddingLeft: 5}}>
-                    <td colSpan={that.props.columnSettings.getVisibleColumnCount()} className="griddle-parent" style={that.props.useGriddleStyles ? {border: "none", "padding": "0 0 0 5px"} : null} key={key+"_td_"+index}>
+                  <tr key={key+"_"}>
+                    <td colSpan={that.props.columnSettings.getVisibleColumnCount()} className="griddle-parent" style={that.props.useGriddleStyles ? {border: "none"} : null} key={key+"_td_"+index}>
                       <Griddle
                           rowMetadata={{key: 'id'}}
                           isSubGriddle={true}
@@ -121,7 +121,6 @@ var GridRowContainer = React.createClass({
               );
           });
       }
-
       return that.props.hasChildren === false ? arr[0] : <tbody key={zzkey}>{that.state.showChildren ? arr.concat(children) : arr}</tbody>
     }
 });

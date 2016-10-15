@@ -306,6 +306,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._resetSelectedRows();
 	    },
 	    setPageSize: function setPageSize(size) {
+	        console.log("setPageSize");
 	        if (this.props.useExternal) {
 	            this.setState({
 	                resultsPerPage: size
@@ -318,6 +319,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.setMaxPage();
 	    },
 	    toggleColumnChooser: function toggleColumnChooser() {
+	        console.log("toggleColumnChooser");
 	        this.setState({
 	            showColumnChooser: !this.state.showColumnChooser
 	        });
@@ -333,10 +335,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 	    toggleCustomComponent: function toggleCustomComponent() {
 	        if (this.state.customComponentType === "grid") {
+	            console.log("toogleCustomComponent: grid");
 	            this.setState({
 	                useCustomGridComponent: !this.shouldUseCustomGridComponent()
 	            });
 	        } else if (this.state.customComponentType === "row") {
+	            console.log("toogleCustomComponent: grid");
 	            this.setState({
 	                useCustomRowComponent: !this.shouldUseCustomRowComponent()
 	            });
@@ -443,6 +447,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._resetSelectedRows();
 	    },
 	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+	        //console.log("componentWillReceiveProps");
 	        this.setMaxPage(nextProps.results);
 	        if (nextProps.resultsPerPage !== this.props.resultsPerPage) {
 	            this.setPageSize(nextProps.resultsPerPage);
@@ -467,7 +472,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.columnSettings.filteredColumns = nextProps.columns;
 	        }
 
-	        if (nextProps.selectedRowIds) {
+	        if (nextProps.selectedRowIds.length > 0) {
 	            var visibleRows = this.getDataForRender(this.getCurrentResults(), this.columnSettings.getColumns(), true);
 
 	            this.setState({
@@ -493,6 +498,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return state;
 	    },
 	    componentWillMount: function componentWillMount() {
+	        //console.log("componentWillMount");
 	        this.verifyExternal();
 	        this.verifyCustom();
 
@@ -568,8 +574,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    },
 	    getDataForRender: function getDataForRender(data, cols, pageList, isChildren) {
-	        var _this = this;
-
 	        var that = this;
 	        var sortColumnType = this.state.sortColumn;
 	        var sortDirectionType = this.state.sortDirection;
@@ -578,12 +582,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // TODO: Если была стортировка на бэкенде, то для последненго уровня можно не сортировать
 	            if (this.props.useExternal) {
 	                sortColumnType = this.getCurrentSort();
-	                sortDirectionType = this.getCurrentSortAscending();
+	                sortDirectionType = this.getCurrentSortAscending() ? 'acs' : 'desc';
 	            }
 	        }
 
 	        // get the correct page size
-	        if (sortColumnType !== "") {
+	        if (sortColumnType && sortColumnType !== "") {
+	            //console.log("sort", sortColumnType, sortDirectionType);
 	            var column = sortColumnType;
 	            var sortColumn = _filter(this.props.columnMetadata, { columnName: column });
 	            var customCompareFn;
@@ -601,52 +606,59 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            if (sortDirectionType) {
 	                if (typeof customCompareFn === 'function') {
+	                    console.log("customCompareFn");
 	                    if (customCompareFn.length === 2) {
 	                        data = data.sort(function (a, b) {
 	                            return customCompareFn(_get(a, column), _get(b, column));
 	                        });
 
-	                        if (this.state.sortDirection === 'desc') {
+	                        if ( /*this.state.sortDirection*/sortDirectionType === 'desc') {
 	                            data.reverse();
 	                        }
 	                    } else if (customCompareFn.length === 1) {
 	                        data = _orderBy(data, function (item) {
 	                            return customCompareFn(_get(item, column));
-	                        }, [this.state.sortDirection]);
+	                        }, [sortDirectionType] /*[this.state.sortDirection]*/);
 	                    }
 	                } else {
-	                    var iteratees = [_property(column)];
-	                    var orders = [this.state.sortDirection];
-	                    multiSort.columns.forEach(function (col, i) {
-	                        iteratees.push(_property(col));
-	                        if (multiSort.orders[i] === 'asc' || multiSort.orders[i] === 'desc') {
-	                            orders.push(multiSort.orders[i]);
-	                        } else {
-	                            orders.push(_this.state.sortDirection);
-	                        }
-	                    });
+	                        var iteratees = [_property(column)];
+	                        //var orders = [this.state.sortDirection];
+	                        var orders = [sortDirectionType];
+	                        multiSort.columns.forEach(function (col, i) {
+	                            iteratees.push(_property(col));
+	                            if (multiSort.orders[i] === 'asc' || multiSort.orders[i] === 'desc') {
+	                                orders.push(multiSort.orders[i]);
+	                            } else {
+	                                //orders.push(this.state.sortDirection);
+	                                orders.push(sortDirectionType);
+	                            }
+	                        });
 
-	                    data = _orderBy(data, iteratees, orders);
-	                }
+	                        data = _orderBy(data, iteratees, orders);
+	                    }
 	            }
 	        }
 
 	        var currentPage = this.getCurrentPage();
+	        //console.log("this.props.useExternal", this.props.useExternal);
 
 	        if (!this.props.useExternal && pageList && this.state.resultsPerPage * (currentPage + 1) <= this.state.resultsPerPage * this.state.maxPage && currentPage >= 0) {
 	            if (this.isInfiniteScrollEnabled()) {
 	                // If we're doing infinite scroll, grab all results up to the current page.
 	                data = first(data, (currentPage + 1) * this.state.resultsPerPage);
 	            } else {
+	                //console.log("zzz");
 	                //the 'rest' is grabbing the whole array from index on and the 'initial' is getting the first n results
 	                var rest = drop(data, currentPage * this.state.resultsPerPage);
 	                data = (dropRight || initial)(rest, rest.length - this.state.resultsPerPage);
 	            }
 	        }
 
-	        var meta = this.columnSettings.getMetadataColumns;
+	        //var meta = this.columnSettings.getMetadataColumns;
 
 	        var transformedData = [];
+
+	        //console.log("getDataForRender", data.length);
 
 	        for (var i = 0; i < data.length; i++) {
 	            var mappedData = data[i];
@@ -654,6 +666,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (typeof mappedData[that.props.childrenColumnName] !== "undefined" && mappedData[that.props.childrenColumnName].length > 0) {
 	                //internally we're going to use children instead of whatever it is so we don't have to pass the custom name around
 	                mappedData["children"] = that.getDataForRender(mappedData[that.props.childrenColumnName], cols, false, true);
+	                //console.log("inner call");
 
 	                if (that.props.childrenColumnName !== "children") {
 	                    delete mappedData[that.props.childrenColumnName];
@@ -715,7 +728,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    },
 	    _toggleSelectRow: function _toggleSelectRow(row, isChecked) {
-
 	        var visibleRows = this.getDataForRender(this.getCurrentResults(), this.columnSettings.getColumns(), true),
 	            newSelectedRowIds = JSON.parse(JSON.stringify(this.state.selectedRowIds));
 
@@ -876,6 +888,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            style: this.props.useGriddleStyles ? this.getClearFixStyles() : null }), this.props.showPager && pagingContent);
 	    },
 	    getStandardGridSection: function getStandardGridSection(data, cols, meta, pagingContent, hasMorePages) {
+	        console.log("getStandardGridSection");
 	        var sortProperties = this.getSortObject();
 	        var multipleSelectionProperties = this.getMultipleSelectionObject();
 
@@ -883,7 +896,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var showNoData = this.shouldShowNoDataSection(data);
 	        var noDataSection = this.getNoDataSection();
 
-	        return React.createElement('div', { className: 'griddle-body' }, React.createElement(GridTable, { useGriddleStyles: this.props.useGriddleStyles,
+	        return React.createElement(GridTable, { useGriddleStyles: this.props.useGriddleStyles,
 	            noDataSection: noDataSection,
 	            showNoData: showNoData,
 	            columnSettings: this.columnSettings,
@@ -913,7 +926,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            externalLoadingComponent: this.props.externalLoadingComponent,
 	            externalIsLoading: this.props.externalIsLoading,
 	            hasMorePages: hasMorePages,
-	            onRowClick: this.props.onRowClick }));
+	            onRowClick: this.props.onRowClick });
 	    },
 	    getContentSection: function getContentSection(data, cols, meta, pagingContent, hasMorePages, globalData) {
 	        if (this.shouldUseCustomGridComponent() && this.props.customGridComponent !== null) {
@@ -948,11 +961,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var settings = this.getSettings();
 
 	        //if we have neither filter or settings don't need to render this stuff
-	        var topSection = this.getTopSection(filter, settings);
+	        //var topSection = this.getTopSection(filter, settings);
 
 	        var keys = [];
 	        var cols = this.columnSettings.getColumns();
 	        //figure out which columns are displayed and show only those
+	        //console.log("render");
 	        var data = this.getDataForRender(results, cols, true);
 
 	        var meta = this.columnSettings.getMetadataColumns();
@@ -975,13 +989,22 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        var resultContent = this.getContentSection(data, cols, meta, pagingContent, hasMorePages, this.props.globalData);
 
-	        var columnSelector = this.getColumnSelectorSection(keys, cols);
+	        //var columnSelector = this.getColumnSelectorSection(keys, cols);
 
 	        var gridClassName = this.props.gridClassName.length > 0 ? "griddle " + this.props.gridClassName : "griddle";
 	        //add custom to the class name so we can style it differently
 	        gridClassName += this.shouldUseCustomRowComponent() ? " griddle-custom" : "";
 
-	        return React.createElement('div', { className: gridClassName }, topSection, columnSelector, React.createElement('div', { className: 'griddle-container', style: this.props.useGriddleStyles && !this.props.isSubGriddle ? { border: "1px solid #DDD" } : null }, resultContent));
+	        /*return (
+	            <div className={gridClassName}>
+	                {topSection}
+	                {columnSelector}
+	                <div className="griddle-container" style={this.props.useGriddleStyles&&!this.props.isSubGriddle? { border: "1px solid #DDD"} : null }>
+	                    {resultContent}
+	                </div>
+	            </div>
+	        );*/
+	        return React.createElement('div', { className: gridClassName }, resultContent);
 	    }
 	});
 
@@ -1132,6 +1155,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        belowSpacerRow = React.createElement('tr', { key: 'below-' + belowSpacerRowStyle.height, style: belowSpacerRowStyle });
 	      }
 
+	      console.log("getNodeContent");
 	      var nodes = nodeData.map(function (row, index) {
 	        var hasChildren = typeof row["children"] !== "undefined" && row["children"].length > 0;
 	        var uniqueId = that.props.rowSettings.getRowKey(row, index);
@@ -1186,6 +1210,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  },
 	  render: function render() {
+	    console.log("render Table");
 	    var that = this;
 	    var nodes = [];
 
@@ -1251,7 +1276,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      nodes = React.createElement('tbody', null, nodes);
 	    }
 
-	    var pagingContent = React.createElement('tbody', null);
+	    var pagingContent = null;
+
 	    if (this.props.showPager) {
 	      var pagingStyles = this.props.useGriddleStyles ? {
 	        padding: "0px",
@@ -6851,7 +6877,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (typeof row["children"] !== "undefined") {
 	          var Griddle = that.constructor.Griddle;
-	          return React.createElement('tr', { key: key + "_", style: { paddingLeft: 5 } }, React.createElement('td', { colSpan: that.props.columnSettings.getVisibleColumnCount(), className: 'griddle-parent', style: that.props.useGriddleStyles ? { border: "none", "padding": "0 0 0 5px" } : null, key: key + "_td_" + index }, React.createElement(Griddle, {
+	          return React.createElement('tr', { key: key + "_" }, React.createElement('td', { colSpan: that.props.columnSettings.getVisibleColumnCount(), className: 'griddle-parent', style: that.props.useGriddleStyles ? { border: "none" } : null, key: key + "_td_" + index }, React.createElement(Griddle, {
 	            rowMetadata: { key: 'id' },
 	            isSubGriddle: true,
 	            results: [row],
@@ -6878,7 +6904,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	          key: key });
 	      });
 	    }
-
 	    return that.props.hasChildren === false ? arr[0] : React.createElement('tbody', { key: zzkey }, that.state.showChildren ? arr.concat(children) : arr);
 	  }
 	});
@@ -7547,7 +7572,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    render: function render() {
 	        var that = this;
 
-	        return React.createElement("div", null, this.props.noDataMessage);
+	        return React.createElement("div", { className: "noDataMessage" }, this.props.noDataMessage);
 	    }
 	});
 
@@ -7632,18 +7657,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this.verifyProps();
 	        var that = this;
-	        var columnStyles = null;
-
-	        if (this.props.useGriddleStyles) {
-	            columnStyles = {
-	                margin: "0px",
-	                padding: that.props.paddingHeight + "px 5px " + that.props.paddingHeight + "px 5px",
-	                height: that.props.rowHeight ? this.props.rowHeight - that.props.paddingHeight * 2 + "px" : null,
-	                backgroundColor: "#FFF",
-	                borderTopColor: "#DDD",
-	                color: "#222"
-	            };
-	        }
 
 	        var columns = this.props.columnSettings.getColumns();
 
@@ -7663,26 +7676,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	            //todo: Make this not as ridiculous looking
 	            var firstColAppend = index === 0 && _this.props.hasChildren && _this.props.showChildren === false && _this.props.useGriddleIcons ? React.createElement('span', { style: _this.props.useGriddleStyles ? { fontSize: "10px", marginRight: "5px" } : null }, _this.props.parentRowCollapsedComponent) : index === 0 && _this.props.hasChildren && _this.props.showChildren && _this.props.useGriddleIcons ? React.createElement('span', { style: _this.props.useGriddleStyles ? { fontSize: "10px" } : null }, _this.props.parentRowExpandedComponent) : "";
 
-	            if (index === 0 && _this.props.isChildRow && _this.props.useGriddleStyles) {
-	                columnStyles = assign(columnStyles, { paddingLeft: 10 });
-	            }
-
 	            if (_this.props.columnSettings.hasColumnMetadata() && typeof meta !== 'undefined' && meta !== null) {
 	                if (typeof meta.customComponent !== 'undefined' && meta.customComponent !== null) {
 	                    var customComponent = React.createElement(meta.customComponent, { data: col[1], rowData: dataView, metadata: meta });
-	                    returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index, style: columnStyles }, customComponent);
+	                    returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index }, customComponent);
 	                } else {
-	                    returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index, style: columnStyles }, firstColAppend, _this.formatData(col[1]));
+	                    returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index }, firstColAppend, _this.formatData(col[1]));
 	                }
 	            }
 
-	            return returnValue || React.createElement('td', { onClick: _this.handleClick, key: index, style: columnStyles }, firstColAppend, col[1]);
+	            return returnValue || React.createElement('td', { onClick: _this.handleClick, key: index }, firstColAppend, col[1]);
 	        });
 
 	        if (nodes && this.props.multipleSelectionSettings && this.props.multipleSelectionSettings.isMultipleSelection) {
 	            var selectedRowIds = this.props.multipleSelectionSettings.getSelectedRowIds();
 
-	            nodes.unshift(React.createElement('td', { key: 'selection', style: columnStyles }, React.createElement('input', {
+	            nodes.unshift(React.createElement('td', { key: 'selection' }, React.createElement('input', {
 	                type: 'checkbox',
 	                checked: this.props.multipleSelectionSettings.getIsRowChecked(dataView),
 	                onChange: this.handleSelectionChange,

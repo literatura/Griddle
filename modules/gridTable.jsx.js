@@ -133,6 +133,7 @@ var GridTable = React.createClass({
         belowSpacerRow = React.createElement('tr', { key: 'below-' + belowSpacerRowStyle.height, style: belowSpacerRowStyle });
       }
 
+      console.log("getNodeContent");
       var nodes = nodeData.map(function (row, index) {
         var hasChildren = typeof row["children"] !== "undefined" && row["children"].length > 0;
         var uniqueId = that.props.rowSettings.getRowKey(row, index);
@@ -187,6 +188,7 @@ var GridTable = React.createClass({
     }
   },
   render: function render() {
+    console.log("render Table");
     var that = this;
     var nodes = [];
 
@@ -252,7 +254,8 @@ var GridTable = React.createClass({
       nodes = React.createElement('tbody', null, nodes);
     }
 
-    var pagingContent = React.createElement('tbody', null);
+    var pagingContent = null;
+
     if (this.props.showPager) {
       var pagingStyles = this.props.useGriddleStyles ? {
         padding: "0px",

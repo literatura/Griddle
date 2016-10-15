@@ -16,7 +16,7 @@ var GridNoData = React.createClass({
     render: function render() {
         var that = this;
 
-        return React.createElement("div", null, this.props.noDataMessage);
+        return React.createElement("div", { className: "noDataMessage" }, this.props.noDataMessage);
     }
 });
 

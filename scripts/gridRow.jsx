@@ -67,18 +67,6 @@ var GridRow = React.createClass({
     render: function() {
         this.verifyProps();
         var that = this;
-        var columnStyles = null;
-
-        if (this.props.useGriddleStyles) {
-          columnStyles = {
-            margin: "0px",
-            padding: that.props.paddingHeight + "px 5px " + that.props.paddingHeight + "px 5px",
-            height: that.props.rowHeight? this.props.rowHeight - that.props.paddingHeight * 2 + "px" : null,
-            backgroundColor: "#FFF",
-            borderTopColor: "#DDD",
-            color: "#222"
-          };
-        }
 
         var columns = this.props.columnSettings.getColumns();
 
@@ -101,27 +89,23 @@ var GridRow = React.createClass({
               index === 0 && this.props.hasChildren && this.props.showChildren && this.props.useGriddleIcons ?
                 <span style={this.props.useGriddleStyles ? {fontSize: "10px"} : null}>{this.props.parentRowExpandedComponent}</span> : "";
 
-            if(index === 0 && this.props.isChildRow && this.props.useGriddleStyles){
-              columnStyles = assign(columnStyles, {paddingLeft:10})
-            }
-
             if (this.props.columnSettings.hasColumnMetadata() && typeof meta !== 'undefined' && meta !== null) {
               if (typeof meta.customComponent !== 'undefined' && meta.customComponent !== null) {
                 var customComponent = <meta.customComponent data={col[1]} rowData={dataView} metadata={meta} />;
-                returnValue = <td onClick={this.handleClick} className={meta.cssClassName} key={index} style={columnStyles}>{customComponent}</td>;
+                returnValue = <td onClick={this.handleClick} className={meta.cssClassName} key={index}>{customComponent}</td>;
               } else {
-                returnValue = <td onClick={this.handleClick} className={meta.cssClassName} key={index} style={columnStyles}>{firstColAppend}{this.formatData(col[1])}</td>;
+                returnValue = <td onClick={this.handleClick} className={meta.cssClassName} key={index}>{firstColAppend}{this.formatData(col[1])}</td>;
               }
             }
 
-            return returnValue || (<td onClick={this.handleClick} key={index} style={columnStyles}>{firstColAppend}{col[1]}</td>);
+            return returnValue || (<td onClick={this.handleClick} key={index}>{firstColAppend}{col[1]}</td>);
         });
 
 		if(nodes && this.props.multipleSelectionSettings && this.props.multipleSelectionSettings.isMultipleSelection) {
 			var selectedRowIds = this.props.multipleSelectionSettings.getSelectedRowIds();
 
 			nodes.unshift(
-              <td key="selection" style={columnStyles}>
+              <td key="selection">
                 <input
                     type="checkbox"
                     checked={this.props.multipleSelectionSettings.getIsRowChecked(dataView)}
