@@ -306,7 +306,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._resetSelectedRows();
 	    },
 	    setPageSize: function setPageSize(size) {
-	        console.log("setPageSize");
 	        if (this.props.useExternal) {
 	            this.setState({
 	                resultsPerPage: size
@@ -319,7 +318,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.setMaxPage();
 	    },
 	    toggleColumnChooser: function toggleColumnChooser() {
-	        console.log("toggleColumnChooser");
 	        this.setState({
 	            showColumnChooser: !this.state.showColumnChooser
 	        });
@@ -335,12 +333,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 	    toggleCustomComponent: function toggleCustomComponent() {
 	        if (this.state.customComponentType === "grid") {
-	            console.log("toogleCustomComponent: grid");
 	            this.setState({
 	                useCustomGridComponent: !this.shouldUseCustomGridComponent()
 	            });
 	        } else if (this.state.customComponentType === "row") {
-	            console.log("toogleCustomComponent: grid");
 	            this.setState({
 	                useCustomRowComponent: !this.shouldUseCustomRowComponent()
 	            });
@@ -398,13 +394,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	            filteredColumns: this.columnSettings.filteredColumns
 	        });
 	    },
-	    nextPage: function nextPage() {
+	    nextPage: function nextPage(e) {
+	        if (e && typeof e.preventDefault == 'function') {
+	            e.preventDefault();
+	        }
 	        var currentPage = this.getCurrentPage();
 	        if (currentPage < this.getCurrentMaxPage() - 1) {
 	            this.setPage(currentPage + 1);
 	        }
 	    },
-	    previousPage: function previousPage() {
+	    previousPage: function previousPage(e) {
+	        if (e && typeof e.preventDefault == 'function') {
+	            e.preventDefault();
+	        }
 	        var currentPage = this.getCurrentPage();
 	        if (currentPage > 0) {
 	            this.setPage(currentPage - 1);
@@ -606,7 +608,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            if (sortDirectionType) {
 	                if (typeof customCompareFn === 'function') {
-	                    console.log("customCompareFn");
 	                    if (customCompareFn.length === 2) {
 	                        data = data.sort(function (a, b) {
 	                            return customCompareFn(_get(a, column), _get(b, column));
@@ -888,7 +889,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            style: this.props.useGriddleStyles ? this.getClearFixStyles() : null }), this.props.showPager && pagingContent);
 	    },
 	    getStandardGridSection: function getStandardGridSection(data, cols, meta, pagingContent, hasMorePages) {
-	        console.log("getStandardGridSection");
 	        var sortProperties = this.getSortObject();
 	        var multipleSelectionProperties = this.getMultipleSelectionObject();
 
@@ -1155,7 +1155,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        belowSpacerRow = React.createElement('tr', { key: 'below-' + belowSpacerRowStyle.height, style: belowSpacerRowStyle });
 	      }
 
-	      console.log("getNodeContent");
 	      var nodes = nodeData.map(function (row, index) {
 	        var hasChildren = typeof row["children"] !== "undefined" && row["children"].length > 0;
 	        var uniqueId = that.props.rowSettings.getRowKey(row, index);
@@ -1210,7 +1209,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  },
 	  render: function render() {
-	    console.log("render Table");
 	    var that = this;
 	    var nodes = [];
 

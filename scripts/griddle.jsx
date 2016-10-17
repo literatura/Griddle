@@ -240,7 +240,6 @@ var Griddle = React.createClass({
 		this._resetSelectedRows();
     },
     setPageSize: function(size){
-        console.log("setPageSize");
         if(this.props.useExternal) {
             this.setState({
                 resultsPerPage: size
@@ -253,7 +252,6 @@ var Griddle = React.createClass({
         this.setMaxPage();
     },
     toggleColumnChooser: function(){
-        console.log("toggleColumnChooser");
         this.setState({
             showColumnChooser: !this.state.showColumnChooser
         });
@@ -273,12 +271,10 @@ var Griddle = React.createClass({
     },
     toggleCustomComponent: function(){
         if(this.state.customComponentType === "grid"){
-            console.log("toogleCustomComponent: grid");
             this.setState({
                 useCustomGridComponent: !this.shouldUseCustomGridComponent()
             });
         } else if(this.state.customComponentType === "row"){
-            console.log("toogleCustomComponent: grid");
             this.setState({
                 useCustomRowComponent: !this.shouldUseCustomRowComponent()
             });
@@ -335,12 +331,18 @@ var Griddle = React.createClass({
             filteredColumns: this.columnSettings.filteredColumns
         });
     },
-    nextPage: function() {
+    nextPage: function(e) {
+        if (e && typeof(e.preventDefault) == 'function') {
+            e.preventDefault();
+        }
         var currentPage = this.getCurrentPage();
         if (currentPage < this.getCurrentMaxPage() - 1) { this.setPage(currentPage + 1); }
     },
-    previousPage: function() {
-      var currentPage = this.getCurrentPage();
+    previousPage: function(e) {
+        if (e && typeof(e.preventDefault) == 'function') {
+            e.preventDefault();
+        }
+        var currentPage = this.getCurrentPage();
         if (currentPage > 0) { this.setPage(currentPage - 1); }
     },
     changeSort: function (column) {
@@ -554,7 +556,6 @@ var Griddle = React.createClass({
 
                 if (sortDirectionType) {
                     if (typeof customCompareFn === 'function') {
-                        console.log("customCompareFn");
                         if (customCompareFn.length === 2) {
                             data = data.sort(function (a, b) {
                                 return customCompareFn(_get(a, column), _get(b, column));
@@ -858,7 +859,6 @@ var Griddle = React.createClass({
             style={this.props.useGriddleStyles ? this.getClearFixStyles() : null} />{this.props.showPager&&pagingContent}</div>
     },
     getStandardGridSection: function(data, cols, meta, pagingContent, hasMorePages){
-        console.log("getStandardGridSection");
         var sortProperties = this.getSortObject();
 		var multipleSelectionProperties = this.getMultipleSelectionObject();
 
