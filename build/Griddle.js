@@ -211,7 +211,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            "previousIconComponent": "",
 	            "isMultipleSelection": false, //currently does not support subgrids
 	            "selectedRowIds": [],
-	            "uniqueIdentifier": "id"
+	            "uniqueIdentifier": "id",
+	            "handleModalAction": null
 	        };
 	    },
 	    propTypes: {
@@ -306,7 +307,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._resetSelectedRows();
 	    },
 	    setPageSize: function setPageSize(size) {
-	        console.log("setPageSize");
 	        if (this.props.useExternal) {
 	            this.setState({
 	                resultsPerPage: size
@@ -319,7 +319,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.setMaxPage();
 	    },
 	    toggleColumnChooser: function toggleColumnChooser() {
-	        console.log("toggleColumnChooser");
 	        this.setState({
 	            showColumnChooser: !this.state.showColumnChooser
 	        });
@@ -335,12 +334,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 	    toggleCustomComponent: function toggleCustomComponent() {
 	        if (this.state.customComponentType === "grid") {
-	            console.log("toogleCustomComponent: grid");
 	            this.setState({
 	                useCustomGridComponent: !this.shouldUseCustomGridComponent()
 	            });
 	        } else if (this.state.customComponentType === "row") {
-	            console.log("toogleCustomComponent: grid");
 	            this.setState({
 	                useCustomRowComponent: !this.shouldUseCustomRowComponent()
 	            });
@@ -447,7 +444,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._resetSelectedRows();
 	    },
 	    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	        //console.log("componentWillReceiveProps");
 	        this.setMaxPage(nextProps.results);
 	        if (nextProps.resultsPerPage !== this.props.resultsPerPage) {
 	            this.setPageSize(nextProps.resultsPerPage);
@@ -498,7 +494,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return state;
 	    },
 	    componentWillMount: function componentWillMount() {
-	        //console.log("componentWillMount");
 	        this.verifyExternal();
 	        this.verifyCustom();
 
@@ -606,7 +601,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            if (sortDirectionType) {
 	                if (typeof customCompareFn === 'function') {
-	                    console.log("customCompareFn");
 	                    if (customCompareFn.length === 2) {
 	                        data = data.sort(function (a, b) {
 	                            return customCompareFn(_get(a, column), _get(b, column));
@@ -888,14 +882,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            style: this.props.useGriddleStyles ? this.getClearFixStyles() : null }), this.props.showPager && pagingContent);
 	    },
 	    getStandardGridSection: function getStandardGridSection(data, cols, meta, pagingContent, hasMorePages) {
-	        console.log("getStandardGridSection");
 	        var sortProperties = this.getSortObject();
 	        var multipleSelectionProperties = this.getMultipleSelectionObject();
 
 	        // no data section
 	        var showNoData = this.shouldShowNoDataSection(data);
 	        var noDataSection = this.getNoDataSection();
-
 	        return React.createElement(GridTable, { useGriddleStyles: this.props.useGriddleStyles,
 	            noDataSection: noDataSection,
 	            showNoData: showNoData,
@@ -926,7 +918,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            externalLoadingComponent: this.props.externalLoadingComponent,
 	            externalIsLoading: this.props.externalIsLoading,
 	            hasMorePages: hasMorePages,
-	            onRowClick: this.props.onRowClick });
+	            onRowClick: this.props.onRowClick,
+	            handleModalAction: this.props.handleModalAction });
 	    },
 	    getContentSection: function getContentSection(data, cols, meta, pagingContent, hasMorePages, globalData) {
 	        if (this.shouldUseCustomGridComponent() && this.props.customGridComponent !== null) {
@@ -1061,7 +1054,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      "parentRowExpandedComponent": "▼",
 	      "externalLoadingComponent": null,
 	      "externalIsLoading": false,
-	      "onRowClick": null
+	      "onRowClick": null,
+	      "handleModalAction": null
 	    };
 	  },
 	  getInitialState: function getInitialState() {
@@ -1155,7 +1149,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        belowSpacerRow = React.createElement('tr', { key: 'below-' + belowSpacerRowStyle.height, style: belowSpacerRowStyle });
 	      }
 
-	      console.log("getNodeContent");
 	      var nodes = nodeData.map(function (row, index) {
 	        var hasChildren = typeof row["children"] !== "undefined" && row["children"].length > 0;
 	        var uniqueId = that.props.rowSettings.getRowKey(row, index);
@@ -1182,8 +1175,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	          rowHeight: that.props.rowHeight,
 	          hasChildren: hasChildren,
 	          tableClassName: that.props.className,
-	          onRowClick: that.props.onRowClick
-	        });
+	          onRowClick: that.props.onRowClick,
+	          handleModalAction: that.props.handleModalAction });
 	      });
 
 	      // no data section
@@ -1210,7 +1203,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	  },
 	  render: function render() {
-	    console.log("render Table");
 	    var that = this;
 	    var nodes = [];
 
@@ -6812,7 +6804,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      "parentRowCollapsedComponent": "▶",
 	      "parentRowExpandedComponent": "▼",
 	      "onRowClick": null,
-	      "multipleSelectionSettings": null
+	      "multipleSelectionSettings": null,
+	      "handleModalAction": null
 	    };
 	  },
 	  getInitialState: function getInitialState() {
@@ -6867,10 +6860,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      paddingHeight: that.props.paddingHeight,
 	      rowHeight: that.props.rowHeight,
 	      onRowClick: that.props.onRowClick,
-	      multipleSelectionSettings: this.props.multipleSelectionSettings }));
+	      multipleSelectionSettings: this.props.multipleSelectionSettings,
+	      handleModalAction: that.props.handleModalAction }));
 
 	    var children = null;
-
 	    if (that.state.showChildren) {
 	      children = that.props.hasChildren && this.props.data["children"].map(function (row, index) {
 	        var key = that.props.rowSettings.getRowKey(row, index);
@@ -6891,7 +6884,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            parentRowExpandedComponent: that.props.parentRowExpandedComponent,
 	            parentRowCollapsedComponent: that.props.parentRowCollapsedComponent,
 	            paddingHeight: that.props.paddingHeight,
-	            rowHeight: that.props.rowHeight })));
+	            rowHeight: that.props.rowHeight,
+	            handleModalAction: that.props.handleModalAction })));
 	        }
 
 	        return React.createElement(that.props.rowSettings.rowComponent, {
@@ -6901,7 +6895,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	          columnSettings: that.props.columnSettings,
 	          isChildRow: true,
 	          columnMetadata: that.props.columnSettings.columnMetadata,
-	          key: key });
+	          key: key,
+	          handleModalAction: that.props.handleModalAction });
 	      });
 	    }
 	    return that.props.hasChildren === false ? arr[0] : React.createElement('tbody', { key: zzkey }, that.state.showChildren ? arr.concat(children) : arr);
@@ -7621,6 +7616,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            "multipleSelectionSettings": null
 	        };
 	    },
+	    //"handleModalAction": null
 	    handleClick: function handleClick(e) {
 	        if (this.props.onRowClick !== null && isFunction(this.props.onRowClick)) {
 	            this.props.onRowClick(this, e);
@@ -7640,6 +7636,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this.props.multipleSelectionSettings.toggleSelectRow(this.props.data, !this.refs.selected.checked);
 	            }
 	        }
+	    },
+	    handleLandClick: function handleLandClick(landId, e) {
+	        e.preventDefault();
+	        e.stopPropagation();
+	        if (this.props.handleModalAction) {
+	            this.props.handleModalAction("landPreview", landId);
+	        }
+	        return false;
+	    },
+	    handleOfferClick: function handleOfferClick(offerId, e) {
+	        e.preventDefault();
+	        e.stopPropagation();
+	        if (this.props.handleModalAction) {
+	            this.props.handleModalAction("offerEdit", offerId);
+	        }
+	        return false;
 	    },
 	    verifyProps: function verifyProps() {
 	        if (this.props.columnSettings === null) {
@@ -7678,8 +7690,43 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            if (_this.props.columnSettings.hasColumnMetadata() && typeof meta !== 'undefined' && meta !== null) {
 	                if (typeof meta.customComponent !== 'undefined' && meta.customComponent !== null) {
-	                    var customComponent = React.createElement(meta.customComponent, { data: col[1], rowData: dataView, metadata: meta });
-	                    returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index }, customComponent);
+	                    //var customComponent = <meta.customComponent data={col[1]} rowData={dataView} metadata={meta} />;
+	                    //returnValue = <td onClick={this.handleClick} className={meta.cssClassName} key={index}>{customComponent}</td>;
+	                    // Отрисовываем сразу здесь все изменения
+	                    if (meta.customComponent == 'link') {
+	                        if (col[0] == "content_id" || dataView.GroupType == "content_id") {
+	                            // ленд
+	                            returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index }, React.createElement('a', { href: '#', onClick: _this.handleLandClick.bind(_this, col[1]) }, col[1]));
+	                        } else if (col[0] == "offer_id" || dataView.GroupType == "offer_id") {
+	                            // оффер
+	                            returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index }, React.createElement('a', { href: '#', onClick: _this.handleOfferClick.bind(_this, col[1]) }, col[1]));
+	                        } else {
+	                            // в других случаях
+	                            returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index }, col[1]);
+	                        }
+	                    } else if (meta.customComponent == 'color') {
+	                        var clName = "";
+	                        var curValue = parseFloat(col[1]);
+	                        if (curValue > 0) {
+	                            clName = "light_green";
+	                            if (curValue >= 30) {
+	                                clName = "green";
+	                            } else if (curValue >= 100) {
+	                                clName = "dark_green";
+	                            }
+	                        } else if (curValue < 0) {
+	                            clName = "pink";
+	                            if (curValue <= -30) {
+	                                clName = "red";
+	                            } else if (curValue <= -100) {
+	                                clName = "dark_red";
+	                            }
+	                        }
+	                        returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index }, React.createElement('span', { className: clName }, col[1]));
+	                    } else {
+	                        var customComponent = React.createElement(meta.customComponent, { data: col[1], rowData: dataView, metadata: meta });
+	                        returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index }, customComponent);
+	                    }
 	                } else {
 	                    returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index }, firstColAppend, _this.formatData(col[1]));
 	                }

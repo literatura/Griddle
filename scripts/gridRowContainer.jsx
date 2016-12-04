@@ -20,7 +20,8 @@ var GridRowContainer = React.createClass({
         "parentRowCollapsedComponent": "▶",
         "parentRowExpandedComponent": "▼",
         "onRowClick": null,
-	    "multipleSelectionSettings": null
+	      "multipleSelectionSettings": null,
+        "handleModalAction": null
       };
     },
     getInitialState: function(){
@@ -75,11 +76,11 @@ var GridRowContainer = React.createClass({
           paddingHeight={that.props.paddingHeight}
           rowHeight={that.props.rowHeight}
           onRowClick={that.props.onRowClick}
-          multipleSelectionSettings={this.props.multipleSelectionSettings} />
+          multipleSelectionSettings={this.props.multipleSelectionSettings}
+          handleModalAction={that.props.handleModalAction} />
       );
 
       var children = null;
-
       if(that.state.showChildren){
           children =  that.props.hasChildren && this.props.data["children"].map(function(row, index){
               var key = that.props.rowSettings.getRowKey(row, index);
@@ -103,7 +104,8 @@ var GridRowContainer = React.createClass({
                           parentRowExpandedComponent={that.props.parentRowExpandedComponent}
                           parentRowCollapsedComponent={that.props.parentRowCollapsedComponent}
                           paddingHeight={that.props.paddingHeight}
-                          rowHeight={that.props.rowHeight} />
+                          rowHeight={that.props.rowHeight}
+                          handleModalAction={that.props.handleModalAction} />
                     </td>
                   </tr>
                 );
@@ -117,7 +119,8 @@ var GridRowContainer = React.createClass({
                     columnSettings={that.props.columnSettings}
                     isChildRow={true}
                     columnMetadata={that.props.columnSettings.columnMetadata}
-                    key={key} />
+                    key={key}
+                    handleModalAction={that.props.handleModalAction} />
               );
           });
       }

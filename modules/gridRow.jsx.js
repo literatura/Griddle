@@ -37,6 +37,7 @@ var GridRow = React.createClass({
             "multipleSelectionSettings": null
         };
     },
+    //"handleModalAction": null
     handleClick: function handleClick(e) {
         if (this.props.onRowClick !== null && isFunction(this.props.onRowClick)) {
             this.props.onRowClick(this, e);
@@ -56,6 +57,22 @@ var GridRow = React.createClass({
                 this.props.multipleSelectionSettings.toggleSelectRow(this.props.data, !this.refs.selected.checked);
             }
         }
+    },
+    handleLandClick: function handleLandClick(landId, e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (this.props.handleModalAction) {
+            this.props.handleModalAction("landPreview", landId);
+        }
+        return false;
+    },
+    handleOfferClick: function handleOfferClick(offerId, e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (this.props.handleModalAction) {
+            this.props.handleModalAction("offerEdit", offerId);
+        }
+        return false;
     },
     verifyProps: function verifyProps() {
         if (this.props.columnSettings === null) {
@@ -94,8 +111,43 @@ var GridRow = React.createClass({
 
             if (_this.props.columnSettings.hasColumnMetadata() && typeof meta !== 'undefined' && meta !== null) {
                 if (typeof meta.customComponent !== 'undefined' && meta.customComponent !== null) {
-                    var customComponent = React.createElement(meta.customComponent, { data: col[1], rowData: dataView, metadata: meta });
-                    returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index }, customComponent);
+                    //var customComponent = <meta.customComponent data={col[1]} rowData={dataView} metadata={meta} />;
+                    //returnValue = <td onClick={this.handleClick} className={meta.cssClassName} key={index}>{customComponent}</td>;
+                    // Отрисовываем сразу здесь все изменения
+                    if (meta.customComponent == 'link') {
+                        if (col[0] == "content_id" || dataView.GroupType == "content_id") {
+                            // ленд
+                            returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index }, React.createElement('a', { href: '#', onClick: _this.handleLandClick.bind(_this, col[1]) }, col[1]));
+                        } else if (col[0] == "offer_id" || dataView.GroupType == "offer_id") {
+                            // оффер
+                            returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index }, React.createElement('a', { href: '#', onClick: _this.handleOfferClick.bind(_this, col[1]) }, col[1]));
+                        } else {
+                            // в других случаях
+                            returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index }, col[1]);
+                        }
+                    } else if (meta.customComponent == 'color') {
+                        var clName = "";
+                        var curValue = parseFloat(col[1]);
+                        if (curValue > 0) {
+                            clName = "light_green";
+                            if (curValue >= 30) {
+                                clName = "green";
+                            } else if (curValue >= 100) {
+                                clName = "dark_green";
+                            }
+                        } else if (curValue < 0) {
+                            clName = "pink";
+                            if (curValue <= -30) {
+                                clName = "red";
+                            } else if (curValue <= -100) {
+                                clName = "dark_red";
+                            }
+                        }
+                        returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index }, React.createElement('span', { className: clName }, col[1]));
+                    } else {
+                        var customComponent = React.createElement(meta.customComponent, { data: col[1], rowData: dataView, metadata: meta });
+                        returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index }, customComponent);
+                    }
                 } else {
                     returnValue = React.createElement('td', { onClick: _this.handleClick, className: meta.cssClassName, key: index }, firstColAppend, _this.formatData(col[1]));
                 }

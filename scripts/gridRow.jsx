@@ -30,7 +30,8 @@ var GridRow = React.createClass({
         "parentRowCollapsedComponent": "▶",
         "parentRowExpandedComponent": "▼",
         "onRowClick": null,
-	    "multipleSelectionSettings": null
+	    "multipleSelectionSettings": null,
+        //"handleModalAction": null
       }
     },
     handleClick: function(e){
@@ -53,6 +54,22 @@ var GridRow = React.createClass({
 			}
 		}
 	},
+    handleLandClick: function(landId, e){
+        e.preventDefault();
+        e.stopPropagation();
+        if(this.props.handleModalAction){
+            this.props.handleModalAction("landPreview", landId);
+        }        
+        return false;
+    },
+    handleOfferClick: function(offerId, e){
+        e.preventDefault();
+        e.stopPropagation();
+        if(this.props.handleModalAction){
+            this.props.handleModalAction("offerEdit", offerId);
+        }        
+        return false;
+    },
     verifyProps: function(){
         if(this.props.columnSettings === null){
            console.error("gridRow: The columnSettings prop is null and it shouldn't be");
@@ -90,12 +107,48 @@ var GridRow = React.createClass({
                 <span style={this.props.useGriddleStyles ? {fontSize: "10px"} : null}>{this.props.parentRowExpandedComponent}</span> : "";
 
             if (this.props.columnSettings.hasColumnMetadata() && typeof meta !== 'undefined' && meta !== null) {
-              if (typeof meta.customComponent !== 'undefined' && meta.customComponent !== null) {
-                var customComponent = <meta.customComponent data={col[1]} rowData={dataView} metadata={meta} />;
-                returnValue = <td onClick={this.handleClick} className={meta.cssClassName} key={index}>{customComponent}</td>;
-              } else {
-                returnValue = <td onClick={this.handleClick} className={meta.cssClassName} key={index}>{firstColAppend}{this.formatData(col[1])}</td>;
-              }
+                if (typeof meta.customComponent !== 'undefined' && meta.customComponent !== null) {
+                    //var customComponent = <meta.customComponent data={col[1]} rowData={dataView} metadata={meta} />;
+                    //returnValue = <td onClick={this.handleClick} className={meta.cssClassName} key={index}>{customComponent}</td>;
+                    // Отрисовываем сразу здесь все изменения
+                    if(meta.customComponent == 'link'){
+                        if(col[0] == "content_id" || dataView.GroupType=="content_id"){ // ленд
+                            returnValue = <td onClick={this.handleClick} className={meta.cssClassName} key={index}>
+                                    <a href="#" onClick={this.handleLandClick.bind(this, col[1])}>{col[1]}</a>
+                                </td>;
+                        }else if(col[0] == "offer_id" || dataView.GroupType=="offer_id"){ // оффер
+                            returnValue = <td onClick={this.handleClick} className={meta.cssClassName} key={index}>
+                                    <a href="#" onClick={this.handleOfferClick.bind(this, col[1])}>{col[1]}</a>
+                                </td>;
+                        }else{ // в других случаях
+                            returnValue = <td onClick={this.handleClick} className={meta.cssClassName} key={index}>{col[1]}</td>;
+                        }
+                    }else if(meta.customComponent == 'color'){
+                        var clName = "";
+                        var curValue = parseFloat(col[1]);
+                        if(curValue > 0){
+                            clName = "light_green";
+                            if(curValue >=30){
+                                clName = "green";
+                            }else if(curValue >=100){
+                                clName = "dark_green";
+                            }
+                        }else if(curValue < 0){
+                            clName="pink";
+                            if(curValue <=-30){
+                                clName="red";
+                            }else if(curValue <=-100){
+                                clName="dark_red";
+                            }
+                        }
+                        returnValue = <td onClick={this.handleClick} className={meta.cssClassName} key={index}><span className={clName}>{col[1]}</span></td>;
+                    }else{
+                        var customComponent = <meta.customComponent data={col[1]} rowData={dataView} metadata={meta} />;
+                        returnValue = <td onClick={this.handleClick} className={meta.cssClassName} key={index}>{customComponent}</td>;
+                    }
+                } else {
+                    returnValue = <td onClick={this.handleClick} className={meta.cssClassName} key={index}>{firstColAppend}{this.formatData(col[1])}</td>;
+                }
             }
 
             return returnValue || (<td onClick={this.handleClick} key={index}>{firstColAppend}{col[1]}</td>);

@@ -134,7 +134,8 @@ var Griddle = React.createClass({
             "previousIconComponent":"",
             "isMultipleSelection": false, //currently does not support subgrids
             "selectedRowIds": [],
-            "uniqueIdentifier": "id"
+            "uniqueIdentifier": "id",
+            "handleModalAction": null
         };
     },
     propTypes: {
@@ -240,7 +241,6 @@ var Griddle = React.createClass({
 		this._resetSelectedRows();
     },
     setPageSize: function(size){
-        console.log("setPageSize");
         if(this.props.useExternal) {
             this.setState({
                 resultsPerPage: size
@@ -253,7 +253,6 @@ var Griddle = React.createClass({
         this.setMaxPage();
     },
     toggleColumnChooser: function(){
-        console.log("toggleColumnChooser");
         this.setState({
             showColumnChooser: !this.state.showColumnChooser
         });
@@ -273,12 +272,10 @@ var Griddle = React.createClass({
     },
     toggleCustomComponent: function(){
         if(this.state.customComponentType === "grid"){
-            console.log("toogleCustomComponent: grid");
             this.setState({
                 useCustomGridComponent: !this.shouldUseCustomGridComponent()
             });
         } else if(this.state.customComponentType === "row"){
-            console.log("toogleCustomComponent: grid");
             this.setState({
                 useCustomRowComponent: !this.shouldUseCustomRowComponent()
             });
@@ -378,7 +375,6 @@ var Griddle = React.createClass({
 		this._resetSelectedRows();
     },
     componentWillReceiveProps: function(nextProps) {
-        //console.log("componentWillReceiveProps");
         this.setMaxPage(nextProps.results);
         if (nextProps.resultsPerPage !== this.props.resultsPerPage) {
             this.setPageSize(nextProps.resultsPerPage);
@@ -433,7 +429,6 @@ var Griddle = React.createClass({
         return state;
     },
     componentWillMount: function() {
-        //console.log("componentWillMount");
         this.verifyExternal();
         this.verifyCustom();
 
@@ -554,7 +549,6 @@ var Griddle = React.createClass({
 
                 if (sortDirectionType) {
                     if (typeof customCompareFn === 'function') {
-                        console.log("customCompareFn");
                         if (customCompareFn.length === 2) {
                             data = data.sort(function (a, b) {
                                 return customCompareFn(_get(a, column), _get(b, column));
@@ -858,14 +852,12 @@ var Griddle = React.createClass({
             style={this.props.useGriddleStyles ? this.getClearFixStyles() : null} />{this.props.showPager&&pagingContent}</div>
     },
     getStandardGridSection: function(data, cols, meta, pagingContent, hasMorePages){
-        console.log("getStandardGridSection");
         var sortProperties = this.getSortObject();
 		var multipleSelectionProperties = this.getMultipleSelectionObject();
 
         // no data section
         var showNoData = this.shouldShowNoDataSection(data);
         var noDataSection =  this.getNoDataSection();
-
         return (<GridTable useGriddleStyles={this.props.useGriddleStyles}
                 noDataSection={noDataSection}
                 showNoData={showNoData}
@@ -896,7 +888,8 @@ var Griddle = React.createClass({
                 externalLoadingComponent={this.props.externalLoadingComponent}
                 externalIsLoading={this.props.externalIsLoading}
                 hasMorePages={hasMorePages}
-                onRowClick={this.props.onRowClick}/>)
+                onRowClick={this.props.onRowClick}
+                handleModalAction={this.props.handleModalAction} />)
     },
     getContentSection: function(data, cols, meta, pagingContent, hasMorePages, globalData){
         if(this.shouldUseCustomGridComponent() && this.props.customGridComponent !== null){
