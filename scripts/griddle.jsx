@@ -332,12 +332,18 @@ var Griddle = React.createClass({
             filteredColumns: this.columnSettings.filteredColumns
         });
     },
-    nextPage: function() {
+    nextPage: function(e) {
+        if (e && typeof(e.preventDefault) == 'function') {
+            e.preventDefault();
+        }
         var currentPage = this.getCurrentPage();
         if (currentPage < this.getCurrentMaxPage() - 1) { this.setPage(currentPage + 1); }
     },
-    previousPage: function() {
-      var currentPage = this.getCurrentPage();
+    previousPage: function(e) {
+        if (e && typeof(e.preventDefault) == 'function') {
+            e.preventDefault();
+        }
+        var currentPage = this.getCurrentPage();
         if (currentPage > 0) { this.setPage(currentPage - 1); }
     },
     changeSort: function (column) {

@@ -332,13 +332,19 @@ var Griddle = React.createClass({
             filteredColumns: this.columnSettings.filteredColumns
         });
     },
-    nextPage: function nextPage() {
+    nextPage: function nextPage(e) {
+        if (e && typeof e.preventDefault == 'function') {
+            e.preventDefault();
+        }
         var currentPage = this.getCurrentPage();
         if (currentPage < this.getCurrentMaxPage() - 1) {
             this.setPage(currentPage + 1);
         }
     },
-    previousPage: function previousPage() {
+    previousPage: function previousPage(e) {
+        if (e && typeof e.preventDefault == 'function') {
+            e.preventDefault();
+        }
         var currentPage = this.getCurrentPage();
         if (currentPage > 0) {
             this.setPage(currentPage - 1);
