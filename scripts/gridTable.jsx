@@ -255,6 +255,8 @@ var GridTable = React.createClass({
       nodes = <tbody>{nodes}</tbody>
     }
 
+    var totalReportContent = (<tbody className="totalReport">{this.props.totalReportContent}</tbody>);
+
     var pagingContent = null;
 
     if(this.props.showPager){
@@ -288,6 +290,7 @@ var GridTable = React.createClass({
                 <table className={this.props.className} style={(this.props.useGriddleStyles&&tableStyle)||null}>
                     {nodes}
                     {loadingContent}
+                    {totalReportContent}
                     {pagingContent}
                 </table>
               </div>
@@ -299,6 +302,7 @@ var GridTable = React.createClass({
                   {tableHeading}
                   {nodes}
                   {loadingContent}
+                  {totalReportContent}
                   {pagingContent}
               </table>
             </div>

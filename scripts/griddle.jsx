@@ -840,6 +840,13 @@ var Griddle = React.createClass({
           </div>
         );
     },
+    getTotalReportSection: function(){ /// MY
+        if('Tracks' in this.props.totalReportColumns){ // Есть данные. Не очень хорошо
+            return (<this.props.totalReportComponent data={this.props.totalReportColumns} allColumns={this.props.columns} />);
+        }else{
+            return null;
+        }
+    },
     getColumnSelectorSection: function(keys, cols){
         return this.state.showColumnChooser ? (
             <GridSettings columns={keys} selectedColumns={cols} setColumns={this.setColumns} settingsText={this.props.settingsText}
@@ -857,7 +864,7 @@ var Griddle = React.createClass({
             className={this.props.customRowComponentClassName} customComponent={this.props.customRowComponent}
             style={this.props.useGriddleStyles ? this.getClearFixStyles() : null} />{this.props.showPager&&pagingContent}</div>
     },
-    getStandardGridSection: function(data, cols, meta, pagingContent, hasMorePages){
+    getStandardGridSection: function(data, cols, meta, totalReportContent, pagingContent, hasMorePages){
         var sortProperties = this.getSortObject();
 		var multipleSelectionProperties = this.getMultipleSelectionObject();
 
@@ -875,6 +882,7 @@ var Griddle = React.createClass({
                 isSubGriddle={this.props.isSubGriddle}
                 useGriddleIcons={this.props.useGriddleIcons}
                 useFixedLayout={this.props.useFixedLayout}
+                totalReportContent={totalReportContent}
                 showPager={this.props.showPager}
                 pagingContent={pagingContent}
                 data={data}
@@ -897,13 +905,13 @@ var Griddle = React.createClass({
                 onRowClick={this.props.onRowClick}
                 handleModalAction={this.props.handleModalAction} />)
     },
-    getContentSection: function(data, cols, meta, pagingContent, hasMorePages, globalData){
+    getContentSection: function(data, cols, meta, totalReportContent, pagingContent, hasMorePages, globalData){
         if(this.shouldUseCustomGridComponent() && this.props.customGridComponent !== null){
            return this.getCustomGridSection();
         } else if(this.shouldUseCustomRowComponent()){
             return this.getCustomRowSection(data, cols, meta, pagingContent, globalData);
         } else {
-            return this.getStandardGridSection(data, cols, meta, pagingContent, hasMorePages);
+            return this.getStandardGridSection(data, cols, meta, totalReportContent, pagingContent, hasMorePages);
         }
     },
     getNoDataSection: function(){
@@ -954,10 +962,11 @@ var Griddle = React.createClass({
         // Determine if we need to enable infinite scrolling on the table.
         var hasMorePages = (currentPage + 1) < maxPage;
 
+        var totalReportContent = this.getTotalReportSection();  /// MY
         // Grab the paging content if it's to be displayed
         var pagingContent = this.getPagingSection(currentPage, maxPage);
 
-        var resultContent = this.getContentSection(data, cols, meta, pagingContent, hasMorePages, this.props.globalData);
+        var resultContent = this.getContentSection(data, cols, meta, totalReportContent, pagingContent, hasMorePages, this.props.globalData);
 
         //var columnSelector = this.getColumnSelectorSection(keys, cols);
 

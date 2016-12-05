@@ -872,6 +872,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        return React.createElement('div', { className: 'griddle-footer' }, this.props.useCustomPagerComponent ? React.createElement(CustomPaginationContainer, { customPagerComponentOptions: this.props.customPagerComponentOptions, next: this.nextPage, previous: this.previousPage, currentPage: currentPage, maxPage: maxPage, setPage: this.setPage, nextText: this.props.nextText, previousText: this.props.previousText, customPagerComponent: this.props.customPagerComponent }) : React.createElement(GridPagination, { useGriddleStyles: this.props.useGriddleStyles, next: this.nextPage, previous: this.previousPage, nextClassName: this.props.nextClassName, nextIconComponent: this.props.nextIconComponent, previousClassName: this.props.previousClassName, previousIconComponent: this.props.previousIconComponent, currentPage: currentPage, maxPage: maxPage, setPage: this.setPage, nextText: this.props.nextText, previousText: this.props.previousText }));
 	    },
+	    getTotalReportSection: function getTotalReportSection() {
+	        /// MY
+	        if ('Tracks' in this.props.totalReportColumns) {
+	            // Есть данные. Не очень хорошо
+	            return React.createElement(this.props.totalReportComponent, { data: this.props.totalReportColumns, allColumns: this.props.columns });
+	        } else {
+	            return null;
+	        }
+	    },
 	    getColumnSelectorSection: function getColumnSelectorSection(keys, cols) {
 	        return this.state.showColumnChooser ? React.createElement(GridSettings, { columns: keys, selectedColumns: cols, setColumns: this.setColumns, settingsText: this.props.settingsText,
 	            settingsIconComponent: this.props.settingsIconComponent, maxRowsText: this.props.maxRowsText, setPageSize: this.setPageSize,
@@ -887,7 +896,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            className: this.props.customRowComponentClassName, customComponent: this.props.customRowComponent,
 	            style: this.props.useGriddleStyles ? this.getClearFixStyles() : null }), this.props.showPager && pagingContent);
 	    },
-	    getStandardGridSection: function getStandardGridSection(data, cols, meta, pagingContent, hasMorePages) {
+	    getStandardGridSection: function getStandardGridSection(data, cols, meta, totalReportContent, pagingContent, hasMorePages) {
 	        var sortProperties = this.getSortObject();
 	        var multipleSelectionProperties = this.getMultipleSelectionObject();
 
@@ -905,6 +914,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            isSubGriddle: this.props.isSubGriddle,
 	            useGriddleIcons: this.props.useGriddleIcons,
 	            useFixedLayout: this.props.useFixedLayout,
+	            totalReportContent: totalReportContent,
 	            showPager: this.props.showPager,
 	            pagingContent: pagingContent,
 	            data: data,
@@ -927,13 +937,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            onRowClick: this.props.onRowClick,
 	            handleModalAction: this.props.handleModalAction });
 	    },
-	    getContentSection: function getContentSection(data, cols, meta, pagingContent, hasMorePages, globalData) {
+	    getContentSection: function getContentSection(data, cols, meta, totalReportContent, pagingContent, hasMorePages, globalData) {
 	        if (this.shouldUseCustomGridComponent() && this.props.customGridComponent !== null) {
 	            return this.getCustomGridSection();
 	        } else if (this.shouldUseCustomRowComponent()) {
 	            return this.getCustomRowSection(data, cols, meta, pagingContent, globalData);
 	        } else {
-	            return this.getStandardGridSection(data, cols, meta, pagingContent, hasMorePages);
+	            return this.getStandardGridSection(data, cols, meta, totalReportContent, pagingContent, hasMorePages);
 	        }
 	    },
 	    getNoDataSection: function getNoDataSection() {
@@ -983,10 +993,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // Determine if we need to enable infinite scrolling on the table.
 	        var hasMorePages = currentPage + 1 < maxPage;
 
+	        var totalReportContent = this.getTotalReportSection(); /// MY
 	        // Grab the paging content if it's to be displayed
 	        var pagingContent = this.getPagingSection(currentPage, maxPage);
 
-	        var resultContent = this.getContentSection(data, cols, meta, pagingContent, hasMorePages, this.props.globalData);
+	        var resultContent = this.getContentSection(data, cols, meta, totalReportContent, pagingContent, hasMorePages, this.props.globalData);
 
 	        //var columnSelector = this.getColumnSelectorSection(keys, cols);
 
@@ -1274,6 +1285,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      nodes = React.createElement('tbody', null, nodes);
 	    }
 
+	    var totalReportContent = React.createElement('tbody', { className: 'totalReport' }, this.props.totalReportContent);
+
 	    var pagingContent = null;
 
 	    if (this.props.showPager) {
@@ -1293,10 +1306,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        tableStyle.tableLayout = "fixed";
 	      }
 
-	      return React.createElement('div', null, React.createElement('table', { className: this.props.className, style: this.props.useGriddleStyles && tableStyle || null }, tableHeading), React.createElement('div', { ref: 'scrollable', onScroll: this.gridScroll, style: gridStyle }, React.createElement('table', { className: this.props.className, style: this.props.useGriddleStyles && tableStyle || null }, nodes, loadingContent, pagingContent)));
+	      return React.createElement('div', null, React.createElement('table', { className: this.props.className, style: this.props.useGriddleStyles && tableStyle || null }, tableHeading), React.createElement('div', { ref: 'scrollable', onScroll: this.gridScroll, style: gridStyle }, React.createElement('table', { className: this.props.className, style: this.props.useGriddleStyles && tableStyle || null }, nodes, loadingContent, totalReportContent, pagingContent)));
 	    }
 
-	    return React.createElement('div', { ref: 'scrollable', onScroll: this.gridScroll, style: gridStyle }, React.createElement('table', { className: this.props.className, style: this.props.useGriddleStyles && tableStyle || null }, tableHeading, nodes, loadingContent, pagingContent));
+	    return React.createElement('div', { ref: 'scrollable', onScroll: this.gridScroll, style: gridStyle }, React.createElement('table', { className: this.props.className, style: this.props.useGriddleStyles && tableStyle || null }, tableHeading, nodes, loadingContent, totalReportContent, pagingContent));
 	  }
 	});
 
