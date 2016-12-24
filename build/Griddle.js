@@ -874,8 +874,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 	    getTotalReportSection: function getTotalReportSection() {
 	        /// MY
-	        if ('Tracks' in this.props.totalReportColumns) {
-	            // Есть данные. Не очень хорошо
+	        if (typeof this.props.totalReportColumns == 'object' && 'Tracks' in this.props.totalReportColumns) {
+	            // Есть данные. Не очень хороший способ определить
 	            return React.createElement(this.props.totalReportComponent, { data: this.props.totalReportColumns, allColumns: this.props.columns });
 	        } else {
 	            return null;
